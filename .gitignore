@@ -4,3 +4,4 @@ widgets
 js
 .idea
 *.iml
+.floo*
