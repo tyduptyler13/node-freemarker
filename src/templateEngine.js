@@ -12,12 +12,12 @@ const TemplateEngine = function(globalNamespace, options) {
 };
 TemplateEngine.constructor = TemplateEngine;
 
-TemplateEngine._inlineVariableRegex = /\$\{[^\}]+\}/g;
+TemplateEngine._inlineVariableRegex = /\${[^}]+}/g;
 
 /**
- * @callback {DefaultCallback}
+ * @callback DefaultCallback
  * @param {Error|String} [err] An error if applicable
- * @param {*} data The data expected unless an error occured
+ * @param {string} data The data expected unless an error occured
  */
 
 /**
@@ -25,7 +25,7 @@ TemplateEngine._inlineVariableRegex = /\$\{[^\}]+\}/g;
  * 
  * @param {string} target The path of the file that is to get rendered
  * @param {Object} namespace Variables to be available to the template
- * @param {DefaultCallback} Returns the rendered data when complete
+ * @param {DefaultCallback} callback Returns the rendered data when complete
  */ 
 TemplateEngine.prototype.render = function(target, namespace, callback) {
     fs.readFile(target, 'utf8', (err, data) => {
@@ -42,14 +42,16 @@ TemplateEngine.prototype.render = function(target, namespace, callback) {
  * 
  * @param {string} data The template data
  * @param {Object} namespace The data the template will use to render
- * @param {DefaultCallback} callback
+ * @param {DefaultCallback} callback Returns the rendered data when complete
  */
 TemplateEngine.prototype.renderRaw = function(data, namespace, callback) {
     var rendered = data.replace(TemplateEngine._inlineVariableRegex, (/** @type {string} */ match) => {
         const valueExpr = match.slice(2, -1);
     });
-    
-}
+
+
+    callback(null, rendered);
+};
 
 
 if (module) {

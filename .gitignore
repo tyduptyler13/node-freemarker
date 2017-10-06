@@ -1,7 +1,15 @@
+# nodejs
 node_modules
+package-lock.json
+
+# c9 stuff (including some of the directories and things this was born from)
 .c9
 widgets
 js
+
+#Intellij
 .idea
 *.iml
+
+#Floobits
 .floo*
