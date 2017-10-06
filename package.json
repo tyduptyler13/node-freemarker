@@ -1,0 +1,14 @@
+{
+  "name": "Learning-Html",
+  "description": "Teaching html to noobs",
+  "verison": "0.0.1",
+  "dependencies": {
+    "async": "^2.5.0"
+  },
+  "devDependencies": {
+    "mocha": "^4.0.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  }
+}
