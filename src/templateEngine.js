@@ -4,12 +4,12 @@ const fs = require('fs');
 const exceptions = require('./Exceptions.js');
 
 /**
- * @param {Object} globalNamespace A raw object of things that could be included in a template
- * @param {?Object} options TODO
+ * @param {Object} [globalNamespace] A raw object of things that could be included in a template
+ * @param {Object} [options] TODO
  * @constructor
  */ 
 const TemplateEngine = function(globalNamespace, options) {
-    this._global = globalNamespace;
+    this._global = globalNamespace || {};
 };
 TemplateEngine.constructor = TemplateEngine;
 
@@ -18,7 +18,7 @@ TemplateEngine._inlineVariableRegex = /\${[^}]+}/g;
 /**
  * @callback DefaultCallback
  * @param {Error|String} [err] An error if applicable
- * @param {string} data The data expected unless an error occured
+ * @param {string} [data] The data expected unless an error occured
  */
 
 /**
@@ -54,7 +54,7 @@ TemplateEngine.prototype.renderRaw = function(data, namespace, callback) {
         } catch (e) {
             if (e instanceof exceptions.ValueExprException) {
                 let prevLines = original.slice(0, offset).split(/\r\n|\r|\n/);
-                throw new exceptions.TemplateException("Failed to inline variable.", e, prevLines.length, ':' + prevLines[prevLines.length - 1].length);
+                callback(new exceptions.TemplateException("Failed to inline variable.", e, prevLines.length, ':' + prevLines[prevLines.length - 1].length));
             }
         }
 
