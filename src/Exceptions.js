@@ -10,8 +10,7 @@ class ExceptionException extends Error {
 
 class TemplateException extends ExceptionException {
     constructor(message, throwable, line) {
-        super(message, throwable);
-        this.line = line;
+        super(message + " " + line, throwable);
     }
 }
 

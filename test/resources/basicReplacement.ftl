@@ -1,10 +1,10 @@
 <html>
 <head>
-  <title>Welcome!</title>
+	<title>Welcome!</title>
 </head>
 <body>
-  <h1>Welcome ${user}!</h1>
-  <p>Our latest product:
-  <a href="${latestProduct.url}">${latestProduct.name}</a>!
+<h1>Welcome ${user}!</h1>
+<p>Our latest product:
+	<a href="${latestProduct.url}">${latestProduct.name}</a>!
 </body>
 </html>

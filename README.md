@@ -20,7 +20,7 @@ Basic replacement example:
   <p>Our latest product:
   <a href="${latestProduct.url}">${latestProduct.name}</a>!
 </body>
-</html>
+</html>j
 ```
 becomes:
 ```
