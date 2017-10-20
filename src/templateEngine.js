@@ -14,7 +14,8 @@ const TemplateEngine = function (globalNamespace, options) {
 TemplateEngine.constructor = TemplateEngine;
 
 TemplateEngine._inlineVariableRegex = /\${[^}]+}/g;
-TemplateEngine._arrayVariableRegex = /\[(\d+)]$/;
+TemplateEngine._arrayVariableRegex = /\[(\d+)]/;
+TemplateEngine._variableNameRegex = /[a-z_][a-z0-9_]*/i;
 
 /**
  * @callback DefaultCallback
@@ -88,9 +89,12 @@ TemplateEngine.prototype._getValueFromNamespace = function (namespace, valueExpr
 	} else if (valueExpr instanceof Array) {
 		parts = valueExpr;
 	}
-	let valueRef = namespace[parts[0]];
+
+	let variableName = TemplateEngine._variableNameRegex.exec(parts[0])[0];
+
+	let valueRef = namespace[variableName];
 	if (valueRef === null || valueRef === undefined) {
-		valueRef = this._global[parts[0]];
+		valueRef = this._global[variableName];
 	}
 
 	if (valueRef === null || valueRef === undefined) {
@@ -121,7 +125,6 @@ TemplateEngine._accessorHandler = function (valueRef, part) {
 		return valueRef;
 	}
 };
-
 
 if (module) {
 	module.exports = TemplateEngine;
