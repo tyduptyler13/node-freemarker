@@ -3,8 +3,7 @@
  */
 class ExceptionException extends Error {
     constructor(message, throwable) {
-        super(message);
-        this.otherException = throwable;
+        super(message + '\n' + throwable.message);
     }
 }
 

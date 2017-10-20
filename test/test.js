@@ -22,6 +22,7 @@ describe("TemplateEngine", function () {
 				engine.render(__dirname + '/resources/basicReplacement.ftl', testObj, function (err, result) {
 					if (err) {
 						done(err);
+						return;
 					}
 
 					assert.equal(result, expected);
@@ -38,7 +39,8 @@ describe("TemplateEngine", function () {
 
 				engine.render(__dirname + '/resources/arrayReplacement.ftl', testObj, function(err, result) {
 					if (err) {
-						done("Render threw an error.");
+						done(err);
+						return;
 					}
 
 					assert.equal(result, expected);

@@ -23,12 +23,11 @@ module.exports = {
 		});
 	},
 
-	chainTest: class {
-		constructor() {
-			this.engine = new TemplateEngine();
-		}
+	chainTest: (function(){
+		let chainTest = function() {
 
-
-
-	}
+		};
+		chainTest.constructor = chainTest;
+		//chainTest.prototype.
+	})()
 };

@@ -14,6 +14,7 @@ const TemplateEngine = function (globalNamespace, options) {
 TemplateEngine.constructor = TemplateEngine;
 
 TemplateEngine._inlineVariableRegex = /\${[^}]+}/g;
+TemplateEngine._arrayVariableRegex = /\[(\d+)]$/;
 
 /**
  * @callback DefaultCallback
@@ -77,6 +78,10 @@ TemplateEngine.prototype.renderRaw = function (data, namespace, callback) {
  * @private
  */
 TemplateEngine.prototype._getValueFromNamespace = function (namespace, valueExpr) {
+	if (namespace === null || namespace === undefined) {
+		throw new exceptions.ValueExprException("Undefined value");
+	}
+
 	let parts = [];
 	if (typeof valueExpr === "string") {
 		parts = valueExpr.split('.');
@@ -92,9 +97,26 @@ TemplateEngine.prototype._getValueFromNamespace = function (namespace, valueExpr
 		throw new exceptions.ValueExprException("Value could not be found in the existing variables/namespace.");
 	}
 
-	//TODO Handle arrays, maps, and function calls
+	try {
+		valueRef = TemplateEngine._accessorHandler(valueRef, parts[0]);
+	} catch (e) {
+		throw new exceptions.ValueExprException("Value could not be processed. Check your syntax and that nothing is null.");
+	}
+
+
 	if (parts.length !== 1) {
 		return this._getValueFromNamespace(valueRef, parts.slice(1));
+	} else {
+		return valueRef;
+	}
+};
+
+TemplateEngine._accessorHandler = function (valueRef, part) {
+	//TODO Handle arrays, maps, and function calls
+
+	let match;
+	if (match = TemplateEngine._arrayVariableRegex.exec(part)) {
+		return TemplateEngine._accessorHandler(valueRef[Number(match[1])], part.replace(TemplateEngine._arrayVariableRegex, ''));
 	} else {
 		return valueRef;
 	}
