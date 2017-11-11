@@ -1,0 +1,14 @@
+<html>
+<body>
+<ul>
+    <li>${smallMMMMM['maps']}</li>
+    <li>${smallMMMMM['myMaps']}</li>
+    <li>${smallMMMMM["_testing"]}</li>
+    <li>${smallMMMMM["What?"]}</li>
+    <li>${smallMMMMM['cool_']}</li>
+    <li>${smallMMMMM['8'][0]}</li>
+    <li>${smallArray[6]["testing"]}</li>
+    <li>${smallArray['5'].theOtherestSquirrel}</li>
+</ul>
+</body>
+</html>

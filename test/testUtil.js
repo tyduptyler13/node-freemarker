@@ -1,6 +1,65 @@
-
 const fs = require('fs');
 const TemplateEngine = require('../src/templateEngine.js');
+const assert = require('assert');
+const async = require('async');
+
+class TemplateEngineTesterResult {
+	constructor() {
+		this._err = null;
+		this._resultFile = null;
+		this._finished = null;
+	}
+
+	hasError(error) {
+		this._err = error;
+		return this;
+	}
+
+	withResultFile(file) {
+		this._resultFile = file;
+		return this;
+	}
+
+	onFinished(callback) {
+		this._finished = callback;
+		return this;
+	}
+
+	handleResult(err, result) {
+		const scope = this;
+		async.waterfall([
+			function(callback) {
+				if (scope._err) {
+					assert.equal(err, scope._err, "Expected errors to be the same");
+				} else {
+					return callback(err);
+				}
+				callback();
+			},
+			function(callback) {
+				if (scope._resultFile) {
+					fs.readFile(scope._resultFile, 'utf8', (err, data) => {
+						if (err) {
+							return callback(err);
+						}
+						assert.equal(result, data, "Expected result to equal file contents");
+						callback();
+					});
+				} else {
+					callback();
+				}
+			}
+		], function(err) {
+			if (err) {
+				console.error("Unexpected error:", err);
+				assert(false, "Unhandled exception");
+			}
+			if (scope._finished) {
+				scope._finished();
+			}
+		});
+	}
+}
 
 module.exports = {
 	/**
@@ -13,7 +72,7 @@ module.exports = {
 	 * @param {string} name
 	 * @param {GetFileCallback} callback
 	 */
-	getFile: function(name, callback) {
+	getFile: function (name, callback) {
 		fs.readFile(__dirname + '/resources/' + name, 'utf8', (err, data) => {
 			if (err) {
 				throw err; //We don't want to continue if there are errors
@@ -23,11 +82,31 @@ module.exports = {
 		});
 	},
 
-	chainTest: (function(){
-		let chainTest = function() {
+	TemplateEngineTester: class {
+		constructor() {
+			this.templateEngine = new TemplateEngine({});
+			this._inFile = "";
+			this._namespace = {};
+		}
 
-		};
-		chainTest.constructor = chainTest;
-		//chainTest.prototype.
-	})()
+		withInputFile(filename) {
+			this._inFile = filename;
+			return this;
+		}
+
+		withNamespace(namespace) {
+			this._namespace = namespace;
+			return this;
+		}
+
+		/**
+		 * @return {TemplateEngineTesterResult}
+		 */
+		render() {
+			const retTest = new TemplateEngineTesterResult();
+			this.templateEngine.render(this._inFile, this._namespace, retTest.handleResult.bind(retTest));
+			return retTest;
+		}
+
+	}
 };
