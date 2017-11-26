@@ -15,7 +15,7 @@ TemplateEngine.constructor = TemplateEngine;
 
 TemplateEngine._inlineVariableRegex = /\${[^}]+}/g;
 TemplateEngine._arrayVariableRegex = /\[(\d+)]/;
-TemplateEngine._mapVariableRegex = /\[([\"'][a-z0-9_]+[\"'])]/i;
+TemplateEngine._mapVariableRegex = /\[(["'][a-z0-9_]+["'])]/i;
 TemplateEngine._variableNameRegex = /[a-z_][a-z0-9_]*/i;
 
 /**
@@ -49,16 +49,15 @@ TemplateEngine.prototype.render = function (target, namespace, callback) {
  * @param {DefaultCallback} callback Returns the rendered data when complete
  */
 TemplateEngine.prototype.renderRaw = function (data, namespace, callback) {
-	var rendered = data.replace(TemplateEngine._inlineVariableRegex, (/** @type {string} */ match, offset, original) => {
+	const rendered = data.replace(TemplateEngine._inlineVariableRegex, (/** @type {string} */ match, offset, original) => {
 		const valueExpr = match.slice(2, -1);
 
 		try {
-			return this._getValueFromNamespace(namespace, valueExpr);
+			this._getValueFromNamespace(namespace, valueExpr);
 		} catch (e) {
 			if (e instanceof exceptions.ValueExprException) {
 				let prevLines = original.slice(0, offset).split(/\r\n|\r|\n/);
 				callback(new exceptions.TemplateException("Failed to inline variable.", e, prevLines.length + ":" + prevLines[prevLines.length - 1].length));
-				return;
 			}
 		}
 

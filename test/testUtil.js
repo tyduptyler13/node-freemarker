@@ -10,7 +10,7 @@ class TemplateEngineTesterResult {
 		this._finished = null;
 	}
 
-	hasError(error) {
+	withError(error) {
 		this._err = error;
 		return this;
 	}
@@ -61,6 +61,43 @@ class TemplateEngineTesterResult {
 	}
 }
 
+class TemplateEngineTester{
+	constructor() {
+		this.templateEngine = new TemplateEngine({});
+		this._inFile = "";
+		this._namespace = {};
+	}
+
+	/**
+	 * Use this file with the next render call
+	 * @param filename
+	 * @returns {TemplateEngineTester}
+	 */
+	withInputFile(filename) {
+		this._inFile = filename;
+		return this;
+	}
+
+	/**
+	 * Uses this namespace with the render call
+	 * @param namespace
+	 * @returns {TemplateEngineTester}
+	 */
+	withNamespace(namespace) {
+		this._namespace = namespace;
+		return this;
+	}
+
+	/**
+	 * @return {TemplateEngineTesterResult}
+	 */
+	render() {
+		const retTest = new TemplateEngineTesterResult();
+		this.templateEngine.render(this._inFile, this._namespace, retTest.handleResult.bind(retTest));
+		return retTest;
+	}
+}
+
 module.exports = {
 	/**
 	 * @callback GetFileCallback
@@ -82,31 +119,5 @@ module.exports = {
 		});
 	},
 
-	TemplateEngineTester: class {
-		constructor() {
-			this.templateEngine = new TemplateEngine({});
-			this._inFile = "";
-			this._namespace = {};
-		}
-
-		withInputFile(filename) {
-			this._inFile = filename;
-			return this;
-		}
-
-		withNamespace(namespace) {
-			this._namespace = namespace;
-			return this;
-		}
-
-		/**
-		 * @return {TemplateEngineTesterResult}
-		 */
-		render() {
-			const retTest = new TemplateEngineTesterResult();
-			this.templateEngine.render(this._inFile, this._namespace, retTest.handleResult.bind(retTest));
-			return retTest;
-		}
-
-	}
+	TemplateEngineTester: TemplateEngineTester
 };
