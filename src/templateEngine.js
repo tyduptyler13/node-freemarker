@@ -49,21 +49,20 @@ TemplateEngine.prototype.render = function (target, namespace, callback) {
  * @param {DefaultCallback} callback Returns the rendered data when complete
  */
 TemplateEngine.prototype.renderRaw = function (data, namespace, callback) {
-	const rendered = data.replace(TemplateEngine._inlineVariableRegex, (/** @type {string} */ match, offset, original) => {
-		const valueExpr = match.slice(2, -1);
+	try {
+		callback(null, data.replace(TemplateEngine._inlineVariableRegex, (/** @type {string} */ match, offset, original) => {
+			const valueExpr = match.slice(2, -1);
 
-		try {
-			this._getValueFromNamespace(namespace, valueExpr);
-		} catch (e) {
-			if (e instanceof exceptions.ValueExprException) {
+			try {
+				return this._getValueFromNamespace(namespace, valueExpr);
+			} catch (e) {
 				let prevLines = original.slice(0, offset).split(/\r\n|\r|\n/);
-				callback(new exceptions.TemplateException("Failed to inline variable.", e, prevLines.length + ":" + prevLines[prevLines.length - 1].length));
+				throw new exceptions.TemplateException("Failed to inline variable.", e, prevLines.length + ":" + prevLines[prevLines.length - 1].length)
 			}
-		}
-
-	});
-
-	callback(null, rendered);
+		}));
+	} catch (e) {
+        callback(e);
+	}
 };
 
 /**
